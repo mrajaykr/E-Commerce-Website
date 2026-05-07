@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Green Heaven Nursery</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="firebase.js" defer></script>
+  <script src="login.js" defer></script>
+</head>
+
+<body>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+
+    <h2>Login</h2>
+
+    <input
+      type="email"
+      id="emailInput"
+      class="auth-input"
+      placeholder="Email"
+    >
+
+    <input
+      type="password"
+      id="passwordInput"
+      class="auth-input"
+      placeholder="Password"
+    >
+
+    <label style="font-size:14px; cursor:pointer;">
+      <input type="checkbox" onclick="togglePassword()"> Show Password
+    </label>
+
+    <button id="emailSignInBtn" class="auth-btn">
+      Login
+    </button>
+
+    <button id="googleSignInBtn" class="auth-btn google-btn">
+      Sign in with Google
+    </button>
+
+    <p class="auth-link">
+      <a href="#" onclick="forgotPassword()">Forgot Password?</a>
+      
+    </p>
+
+    <p class="auth-link">
+      Don’t have an account?
+      <a href="signup.html">Signup</a>
+    </p>
+
+    <p id="message" class="auth-message"></p>
+
+  </div>
+</div>
+
+</body>
+</html>

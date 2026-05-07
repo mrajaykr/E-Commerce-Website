@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Address | Green Heaven Nursery</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="firebase.js"></script>
+</head>
+
+<body>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+
+    <h2>My Address</h2>
+
+    <textarea
+      id="address"
+      class="auth-input"
+      placeholder="Enter full delivery address"
+      rows="4"
+    ></textarea>
+
+    <input
+      type="text"
+      id="pincode"
+      class="auth-input"
+      placeholder="Enter pincode"
+    >
+
+    <button class="auth-btn" onclick="saveAddress()">
+      Save Address
+    </button>
+
+    <p id="msg" class="auth-message"></p>
+
+  </div>
+  <div> <button class="auth-btn" onclick="changePassword()">
+  Change Password
+</button>
+<p id="pwdMsg" class="auth-message"></p>
+</div>
+</div>
+
+<script>
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  // Load saved data
+  document.getElementById("address").value =
+    localStorage.getItem("address") || "";
+
+  document.getElementById("pincode").value =
+    localStorage.getItem("pincode") || "";
+});
+
+function saveAddress() {
+  const address = document.getElementById("address").value.trim();
+  const pincode = document.getElementById("pincode").value.trim();
+
+  if (!address || !pincode) {
+    document.getElementById("msg").innerText =
+      "Please fill address and pincode";
+    return;
+  }
+
+  localStorage.setItem("address", address);
+  localStorage.setItem("pincode", pincode);
+
+  document.getElementById("msg").innerText =
+    "Address saved successfully ✅";
+
+function changePassword() {
+  const user = firebase.auth().currentUser;
+
+  if (!user) return;
+
+  firebase.auth()
+    .sendPasswordResetEmail(user.email)
+    .then(() => {
+      document.getElementById("pwdMsg").innerText =
+        "Password reset link sent to your email";
+    });
+}
+
+firebase.auth().fetchSignInMethodsForEmail(email)
+  .then(methods => {
+    if (methods.includes("google.com")) {
+      alert("This account uses Google Sign-In. Please login with Google.");
+      return;
+    }
+    return firebase.auth().sendPasswordResetEmail(email);
+  });
+
+
+}
+</script>
+
+</body>
+</html>

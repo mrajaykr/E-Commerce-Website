@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signup | Green Heaven Nursery</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+  <script src="firebase.js" defer></script>
+</head>
+
+<body>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+
+    <h2>Create Account</h2>
+
+    <input
+      type="email"
+      id="signupEmail"
+      class="auth-input"
+      placeholder="Email"
+    >
+
+    <input
+      type="password"
+      id="signupPassword"
+      class="auth-input"
+      placeholder="Password"
+    >
+
+    <label style="font-size:14px; cursor:pointer;">
+      <input type="checkbox" onclick="toggleSignupPassword()"> Show Password
+    </label>
+
+    <button class="auth-btn" onclick="signup()">
+      Signup
+    </button>
+
+    <p class="auth-link">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </p>
+
+    <p id="signupMsg" class="auth-message"></p>
+
+  </div>
+</div>
+
+<script>
+function toggleSignupPassword() {
+  const pwd = document.getElementById("signupPassword");
+  pwd.type = pwd.type === "password" ? "text" : "password";
+}
+
+function signup() {
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+  const msg = document.getElementById("signupMsg");
+
+  firebase.auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then(async (res) => {
+      await res.user.sendEmailVerification();
+      msg.innerText =
+        "✅ Verification email sent. Please verify before login.";
+    })
+    .catch(err => {
+      msg.innerText = err.message;
+    });
+}
+</script>
+
+</body>
+</html>

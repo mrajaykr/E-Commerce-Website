@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Green Heaven Nursery | Cart</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="firebase.js" defer></script>
+
+<style>
+/* UI unchanged — exactly as you sent earlier */
+body { font-family: Roboto; background:#f6f6f6; margin:0 }
+.navbar { background:#388e3c;color:#fff;padding:14px 30px;display:flex;justify-content:space-between }
+.cart-container { max-width:1100px;margin:40px auto;display:grid;grid-template-columns:1fr 350px;gap:30px }
+.cart-items,.summary { background:#fff;padding:20px;border-radius:10px }
+.cart-item { display:grid;grid-template-columns:80px 1fr auto;gap:15px;align-items:center;border-bottom:1px solid #eee;padding:10px 0 }
+.cart-item img { width:80px;border-radius:6px }
+.qty button { width:26px;height:26px;border:none;border-radius:50%;background:#43a047;color:#fff }
+.remove { background:#f44336;color:#fff;border:none;padding:5px 10px;border-radius:12px }
+.checkout { width:100%;padding:14px;background:#43a047;color:#fff;border:none;border-radius:6px }
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+  <div>🌱 Green Heaven Nursery</div>
+  <a href="index.html" style="color:#fff">Home</a>
+</header>
+
+<div class="cart-container">
+  <div class="cart-items" id="cartItems"></div>
+
+  <div class="summary">
+    <h3>Order Summary</h3>
+    <p>Subtotal: ₹<span id="subtotal">0</span></p>
+    <p>Shipping: ₹<span id="shipping">50</span></p>
+    <h3>Total: ₹<span id="total">0</span></h3>
+    <button class="checkout">Checkout</button>
+  </div>
+</div>
+
+<script>
+const CART_KEY = "greenHeavenCart";
+
+function getCart(){
+  return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+}
+function saveCart(c){ localStorage.setItem(CART_KEY,JSON.stringify(c)); }
+
+function renderCart(){
+  const cart = getCart();
+  const box = document.getElementById("cartItems");
+  let subtotal = 0;
+
+  if(cart.length === 0){
+    box.innerHTML = "<h3>Cart is empty</h3>";
+    document.getElementById("subtotal").innerText = 0;
+    document.getElementById("total").innerText = 0;
+    return;
+  }
+
+  box.innerHTML = cart.map(i=>{
+    subtotal += i.price * i.quantity;
+    return `
+      <div class="cart-item">
+        <img src="${i.image}">
+        <div>
+          <b>${i.name}</b><br>
+          ₹${i.price}<br>
+          <div class="qty">
+            <button onclick="changeQty(${i.id},-1)">-</button>
+            ${i.quantity}
+            <button onclick="changeQty(${i.id},1)">+</button>
+          </div>
+          <button class="remove" onclick="removeItem(${i.id})">Remove</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("subtotal").innerText = subtotal;
+  document.getElementById("total").innerText = subtotal + 50;
+}
+
+function changeQty(id,delta){
+  const cart = getCart();
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+  item.quantity += delta;
+  if(item.quantity<=0){
+    removeItem(id);
+  }else{
+    saveCart(cart);
+    renderCart();
+  }
+}
+
+function removeItem(id){
+  const cart = getCart().filter(i=>i.id!==id);
+  saveCart(cart);
+  renderCart();
+}
+
+renderCart();
+</script>
+
+</body>
+</html>
